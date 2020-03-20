@@ -19,10 +19,10 @@ var (
 )
 
 func init() {
-	flag.StringVar(&username, "u", "root", "数据库用户名")
-	flag.StringVar(&password, "p", "123456", "数据库密码")
-	flag.StringVar(&address, "a", "localhost:3306", "数据库地址")
-	flag.StringVar(&db, "d", "test", "数据库名称")
+	flag.StringVar(&username, "u", "", "数据库用户名")
+	flag.StringVar(&password, "p", "", "数据库密码")
+	flag.StringVar(&address, "a", "", "数据库地址")
+	flag.StringVar(&db, "d", "", "数据库名称")
 	flag.Parse()
 }
 
