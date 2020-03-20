@@ -63,7 +63,7 @@ func main() {
 		}
 		tables = append(tables, table)
 	}
-	infoRows, err := conn.Query(fmt.Sprintf("select TABLE_NAME,COLUMN_NAME,IS_NULLABLE, COLUMN_TYPE,COLUMN_DEFAULT,COLUMN_COMMENT,COLUMN_KEY  from information_schema.`COLUMNS` where TABLE_SCHEMA ='test' and TABLE_NAME IN (%s)", "'"+strings.Join(tables, "','")+"'"))
+	infoRows, err := conn.Query(fmt.Sprintf("select TABLE_NAME,COLUMN_NAME,IS_NULLABLE, COLUMN_TYPE,COLUMN_DEFAULT,COLUMN_COMMENT,COLUMN_KEY  from information_schema.`COLUMNS` where TABLE_SCHEMA ='%s' and TABLE_NAME IN (%s)", db, "'"+strings.Join(tables, "','")+"'"))
 	if err != nil {
 		log.Println("select table info failed,err :", err.Error())
 		os.Exit(1)
@@ -84,6 +84,7 @@ func main() {
 	}
 	//查询表注释
 	rowDesc, err := conn.Query("SELECT TABLE_NAME ,table_comment FROM information_schema.`TABLES` WHERE table_schema = ? ORDER BY table_name", db)
+	defer rowDesc.Close()
 	if err != nil {
 		log.Println("query table desc failed,err:", err.Error())
 		os.Exit(1)
@@ -117,7 +118,7 @@ func createMd(list []string, listMap map[string][]Filed, descMap map[string]stri
 		buf.WriteString(fmt.Sprintf("### %d. Table：%s\n", i+1, l))
 		buf.WriteString("- - -\n")
 		//表注释
-		buf.WriteString(fmt.Sprintf("- 说明: %s\n", descMap[l]))
+		buf.WriteString(fmt.Sprintf("- 表注释: %s\n", descMap[l]))
 		//表内容
 		buf.WriteString("| 字段 | 类型 | 键 | 空 | 默认 | 注释 |\n")
 		buf.WriteString("| :--: | :--: | :--: | :--: | :--: | :--: |\n")
@@ -137,5 +138,5 @@ func createMd(list []string, listMap map[string][]Filed, descMap map[string]stri
 		log.Println("file write fail,err:", err.Error())
 		os.Exit(1)
 	}
-	fmt.Println("导出成功,导出文件名-->", filename)
+	fmt.Println("导出成功 ==>", filename)
 }
